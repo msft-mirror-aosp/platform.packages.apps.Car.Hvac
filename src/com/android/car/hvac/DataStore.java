@@ -38,40 +38,45 @@ public class DataStore {
     private SparseArray<Float> mTemperature = new SparseArray<Float>();
     @GuardedBy("mTemperatureAvailable")
     private SparseBooleanArray mTemperatureAvailable = new SparseBooleanArray();
-    @GuardedBy("mFanSpeed")
-    private Integer mFanSpeed = 0;
+    private final Object mFanSpeedLock = new Object();
+    @GuardedBy("mFanSpeedLock")
+    private int mFanSpeed = 0;
     @GuardedBy("mAirflow")
     private SparseIntArray mAirflow = new SparseIntArray();
     @GuardedBy("mDefrosterState")
     private SparseBooleanArray mDefrosterState = new SparseBooleanArray();
-    @GuardedBy("mAcState")
-    private Boolean mAcState = false;
+    private final Object mAcStateLock = new Object();
+    @GuardedBy("mAcStateLock")
+    private boolean mAcState = false;
     @GuardedBy("mSeatWarmerLevel")
     private SparseIntArray mSeatWarmerLevel = new SparseIntArray();
-    @GuardedBy("mAirCirculationState")
-    private Boolean mAirCirculationState = false;
-    @GuardedBy("mAutoModeState")
-    private Boolean mAutoModeState = false;
-    @GuardedBy("mHvacPowerState")
-    private Boolean mHvacPowerState = false;
+    private final Object mAirCirculationStateLock = new Object();
+    @GuardedBy("mAirCirculationStateLock")
+    private boolean mAirCirculationState = false;
+    private final Object mAutoModeStateLock = new Object();
+    @GuardedBy("mAutoModeStateLock")
+    private boolean mAutoModeState = false;
+    private final Object mHvacPowerStateLock = new Object();
+    @GuardedBy("mHvacPowerStateLock")
+    private boolean mHvacPowerState = false;
 
     @GuardedBy("mTemperature")
     private SparseLongArray mLastTemperatureSet = new SparseLongArray();
-    @GuardedBy("mFanSpeed")
+    @GuardedBy("mFanSpeedLock")
     private long mLastFanSpeedSet;
     @GuardedBy("mAirflow")
     private SparseLongArray mLastAirflowSet = new SparseLongArray();
     @GuardedBy("mDefrosterState")
     private SparseLongArray mLastDefrosterSet = new SparseLongArray();
-    @GuardedBy("mAcState")
+    @GuardedBy("mAcStateLock")
     private long mLastAcSet;
     @GuardedBy("mSeatWarmerLevel")
     private SparseLongArray mLastSeatWarmerLevel = new SparseLongArray();
-    @GuardedBy("mAirCirculationState")
+    @GuardedBy("mAirCirculationStateLock")
     private long mAirCirculationLastSet;
-    @GuardedBy("mAutoModeState")
+    @GuardedBy("mAutoModeStateLock")
     private long mAutoModeLastSet;
-    @GuardedBy("mHvacPowerState")
+    @GuardedBy("mHvacPowerStateLock")
     private long mHvacPowerLastSet;
 
 
@@ -130,13 +135,13 @@ public class DataStore {
     }
 
     public int getFanSpeed() {
-        synchronized (mFanSpeed) {
+        synchronized (mFanSpeedLock) {
             return mFanSpeed;
         }
     }
 
     public void setFanSpeed(int speed) {
-        synchronized (mFanSpeed) {
+        synchronized (mFanSpeedLock) {
             mFanSpeed = speed;
             mLastFanSpeedSet = SystemClock.uptimeMillis();
         }
@@ -144,7 +149,7 @@ public class DataStore {
 
     public boolean shouldPropagateFanSpeedUpdate(int zone, int speed) {
         // TODO: We ignore fan speed zones for now because we dont have a multi zone car.
-        synchronized (mFanSpeed) {
+        synchronized (mFanSpeedLock) {
             if (SystemClock.uptimeMillis() - mLastFanSpeedSet < COALESCE_TIME_MS) {
                 return false;
             }
@@ -154,20 +159,20 @@ public class DataStore {
     }
 
     public boolean getAcState() {
-        synchronized (mAcState) {
+        synchronized (mAcStateLock) {
             return mAcState;
         }
     }
 
     public void setAcState(boolean acState) {
-        synchronized (mAcState) {
+        synchronized (mAcStateLock) {
             mAcState = acState;
             mLastAcSet = SystemClock.uptimeMillis();
         }
     }
 
     public boolean shouldPropagateAcUpdate(boolean acState) {
-        synchronized (mAcState) {
+        synchronized (mAcStateLock) {
             if (SystemClock.uptimeMillis() - mLastAcSet < COALESCE_TIME_MS) {
                 return false;
             }
@@ -223,20 +228,20 @@ public class DataStore {
     }
 
     public boolean getAirCirculationState() {
-        synchronized (mAirCirculationState) {
+        synchronized (mAirCirculationStateLock) {
             return mAirCirculationState;
         }
     }
 
     public void setAirCirculationState(boolean airCirculationState) {
-        synchronized (mAirCirculationState) {
+        synchronized (mAirCirculationStateLock) {
             mAirCirculationState = airCirculationState;
             mAirCirculationLastSet = SystemClock.uptimeMillis();
         }
     }
 
     public boolean shouldPropagateAirCirculationUpdate(boolean airCirculationState) {
-        synchronized (mAirCirculationState) {
+        synchronized (mAirCirculationStateLock) {
             if (SystemClock.uptimeMillis() - mAirCirculationLastSet < COALESCE_TIME_MS) {
                 return false;
             }
@@ -246,20 +251,20 @@ public class DataStore {
     }
 
     public boolean getAutoModeState() {
-        synchronized (mAutoModeState) {
+        synchronized (mAutoModeStateLock) {
             return mAutoModeState;
         }
     }
 
     public void setAutoModeState(boolean autoModeState) {
-        synchronized (mAutoModeState) {
+        synchronized (mAutoModeStateLock) {
             mAutoModeState = autoModeState;
             mAutoModeLastSet = SystemClock.uptimeMillis();
         }
     }
 
     public boolean shouldPropagateAutoModeUpdate(boolean autoModeState) {
-        synchronized (mAutoModeState) {
+        synchronized (mAutoModeStateLock) {
             if (SystemClock.uptimeMillis() - mAutoModeLastSet < COALESCE_TIME_MS) {
                 return false;
             }
@@ -269,20 +274,20 @@ public class DataStore {
     }
 
     public boolean getHvacPowerState() {
-        synchronized (mHvacPowerState) {
+        synchronized (mHvacPowerStateLock) {
             return mHvacPowerState;
         }
     }
 
     public void setHvacPowerState(boolean hvacPowerState) {
-        synchronized (mHvacPowerState) {
+        synchronized (mHvacPowerStateLock) {
             mHvacPowerState = hvacPowerState;
             mHvacPowerLastSet = SystemClock.uptimeMillis();
         }
     }
 
     public boolean shouldPropagateHvacPowerUpdate(boolean hvacPowerState) {
-        synchronized (mHvacPowerState) {
+        synchronized (mHvacPowerStateLock) {
             if (SystemClock.uptimeMillis() - mHvacPowerLastSet < COALESCE_TIME_MS) {
                 return false;
             }
