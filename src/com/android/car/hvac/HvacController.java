@@ -466,6 +466,8 @@ public class HvacController extends Service {
                 mDataStore.setTemperature(zone, value, available);
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchTemperature");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch temperature", e);
             }
         }
     }
@@ -564,6 +566,8 @@ public class HvacController extends Service {
                         CarHvacManager.ID_ZONED_FAN_SPEED_SETPOINT, zone));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchFanSpeed");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch fan speed", e);
             }
         }
     }
@@ -612,6 +616,8 @@ public class HvacController extends Service {
                         CarHvacManager.ID_WINDOW_DEFROSTER_ON, zone));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchDefrosterState");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch defroster state", e);
             }
         }
     }
@@ -657,6 +663,8 @@ public class HvacController extends Service {
                         SEAT_ALL));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchAcState");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch ac state", e);
             }
         }
     }
@@ -701,6 +709,8 @@ public class HvacController extends Service {
                 mDataStore.setAirflow(SEAT_ALL, fanPositionToAirflowIndex(val));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchAirFlow");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch airflow", e);
             }
         }
     }
@@ -747,6 +757,8 @@ public class HvacController extends Service {
                                 SEAT_ALL));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchAirCirculationState");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch air circulation", e);
             }
         }
     }
@@ -807,6 +819,8 @@ public class HvacController extends Service {
                         CarHvacManager.ID_ZONED_HVAC_POWER_ON, SEAT_ALL));
             } catch (android.car.CarNotConnectedException e) {
                 Log.e(TAG, "Car not connected in fetchHvacPowerState");
+            } catch (Exception e) {
+                Log.e(TAG, "Error while fetch power state", e);
             }
         }
     }
